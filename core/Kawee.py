@@ -2,28 +2,15 @@ from importlib import import_module
 from core.SpeechRecognizer import SpeechRecognizer
 from core.Speaker import Speaker
 from core.exceptions.CommandNotFoundException import CommandNotFoundException
+from core.exceptions.InvalidCommandParams import InvalidCommandParams
 from commands.BaseCommand import BaseCommand
 from unicodedata import normalize
 from json import JSONEncoder, JSONDecoder
-
-
-def capitalize_first_letter(word):
-    return word.capitalize()
-
-
-def parse_text(text):
-    split_text = text.split(' ')
-    parsed_text = list(map(capitalize_first_letter, split_text))
-
-    return ''.join(parsed_text)
+from dotenv import load_dotenv
 
 
 def add_command_suffix(text):
     return text + 'Command'
-
-
-def is_command(obj_instance):
-    return isinstance(obj_instance, BaseCommand)
 
 
 def remove_special_chars(text):
@@ -33,12 +20,18 @@ def remove_special_chars(text):
 class Kawee:
     COMMANDS_MODULE = 'commands'
     JSON_COMMANDS_PATH = './commands.json'
+    
 
     def __init__(self):
+        self.__init_dot_env()
+
         self.speech_recognizer = SpeechRecognizer()
         self.speaker = Speaker()
 
         self.start()
+
+    def __init_dot_env(self):
+        load_dotenv()
 
     def start(self):
         text = self.listen()
@@ -49,6 +42,9 @@ class Kawee:
 
         except CommandNotFoundException:
             self.speaker.play_command_not_found()
+        
+        except InvalidCommandParams:
+            self.speaker.play_invalid_params()
 
     def listen(self):
         while True:

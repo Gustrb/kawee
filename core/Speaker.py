@@ -26,3 +26,6 @@ class Speaker:
 
     def play_command_not_found(self):
         self.speak('Não entendi, por favor repita')
+
+    def play_invalid_params(self):
+        self.speak('Para pedir a temperatura é necessário informar um local')
