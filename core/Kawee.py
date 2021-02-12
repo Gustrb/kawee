@@ -1,37 +1,24 @@
 from importlib import import_module
+from json import JSONDecoder
+from lib.utils import init_dotenv, remove_special_chars, add_command_suffix
+
 from core.SpeechRecognizer import SpeechRecognizer
 from core.Speaker import Speaker
 from core.exceptions.CommandNotFoundException import CommandNotFoundException
 from core.exceptions.InvalidCommandParams import InvalidCommandParams
-from commands.BaseCommand import BaseCommand
-from unicodedata import normalize
-from json import JSONEncoder, JSONDecoder
-from dotenv import load_dotenv
-
-
-def add_command_suffix(text):
-    return text + 'Command'
-
-
-def remove_special_chars(text):
-    return normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
 
 
 class Kawee:
     COMMANDS_MODULE = 'commands'
     JSON_COMMANDS_PATH = './commands.json'
-    
 
     def __init__(self):
-        self.__init_dot_env()
+        init_dotenv()
 
         self.speech_recognizer = SpeechRecognizer()
         self.speaker = Speaker()
 
         self.start()
-
-    def __init_dot_env(self):
-        load_dotenv()
 
     def start(self):
         text = self.listen()

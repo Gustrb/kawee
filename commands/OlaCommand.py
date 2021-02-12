@@ -3,7 +3,7 @@ from commands.BaseCommand import BaseCommand
 
 class OlaCommand(BaseCommand):
     def __init__(self, params=[]):
-        super().__init__()
+        super().__init__(params)
 
     def exec(self):
         return 'Olá!'

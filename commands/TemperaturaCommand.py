@@ -1,11 +1,8 @@
 import requests
 from os import getenv
 from commands.BaseCommand import BaseCommand
-import math
-
-
-def kelvin_to_celsius(k):
-    return math.trunc(k - 273.15)
+from core.exceptions.InvalidCommandParams import InvalidCommandParams
+from lib.utils import kelvin_to_celsius
 
 
 class TemperaturaCommand(BaseCommand):
@@ -27,13 +24,13 @@ class TemperaturaCommand(BaseCommand):
         if city_name is None:
             raise InvalidCommandParams(self.params)
 
-        response = requests.get(self.BASE_API_URL + f'q={city_name}&appid={api_key}')
+        response = requests.get(f'{self.BASE_API_URL}q={city_name}&appid={api_key}')
         parsed_response = response.json()
 
-        temperature = parsed_response['main']['temp']
-        feels_like = parsed_response['main']['feels_like']
+        temperature = kelvin_to_celsius(parsed_response['main']['temp'])
+        feels_like = kelvin_to_celsius(parsed_response['main']['feels_like'])
 
-        return f'A temperatura é {kelvin_to_celsius(temperature)} graus celsius e a sensação térmica é de {kelvin_to_celsius(feels_like)} graus celsius'
+        return f'A temperatura é {temperature} graus celsius e a sensação térmica é de {feels_like} graus celsius '
 
     def __str__(self):
         return __class__
